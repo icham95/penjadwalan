@@ -79,10 +79,14 @@
             <div class="text"><strong>${countUser.dosen}</strong><br><small>user dari dosen</small></div>
           </div>
           <div style="clear:both;"></div>
-          <div class="statistic d-flex align-items-center bg-white has-shadow col-lg-2"
-          style="margin-right:0px;">
-            <div class="icon bg-orange"><i class="fa fa-paper-plane-o"></i></div>
-            <div class="text"><strong>147</strong><br><small>user dari dosen</small></div>
+          <div class="statistic align-items-center bg-white has-shadow col-lg-2"
+          style="margin-right:0px;"
+          v-if="loadingProses == true">
+            <div style="text-align:center;">
+              <i class="fa fa-cog fa-spin fa-3x fa-fw" style="color:indigo;"></i>
+              <span class="sr-only">Loading...</span>
+              <div> <small>Memproses..</small> </div>
+            </div>
           </div>
           <div style="clear:both;"></div>
         </div>
@@ -196,7 +200,7 @@
         </div>
 
         <div class="col-lg-4">
-          <div class="card">
+          <div class="card" style="position:relative;">
             <div class="form-group" style="margin-bottom:7px;">       
               <input type="text" v-model="form.pencarian" @keyup.enter = "pencarian()"
               placeholder="Cari username" class="form-control">
@@ -204,7 +208,19 @@
             <div style="padding:0px 0px 7px 20px;font-size:24px;">
               User
             </div>
-            <div class="card-body" style="padding-top:0px;border-top:1px solid rgba(0,0,0,0.1);">
+            <div style="position:absolute;width:100%;height:100%;
+            background-color:rgba(0,0,0,0.7);text-align:center;"
+            v-if="loadingUser == true">
+              <div style="padding-top:120px;">
+                <i class="fa fa-spinner fa-pulse fa-4x fa-fw" style="color:white;"></i>
+                <span class="sr-only">Loading...</span>
+                <div style="color:white;padding-top:30px;">
+                  mengambil data..
+                </div>
+              </div>
+            </div>
+            <div class="card-body"
+            style="padding-top:0px;border-top:1px solid rgba(0,0,0,0.1);">
               <div style="min-height:320px;">
                 <li v-for="(item, index) in users" 
                 @click.prevent = "toDetail(item, index)"
@@ -340,6 +356,8 @@
       delimiters: ['${', '}'],
       data () {
         return {
+          loadingUser: false,
+          loadingProses: false,
           page: 1,
           limit: 5,
           offset: 0,
@@ -386,12 +404,14 @@
       },
       methods: {
         getUsers (plus = '', suksesFungsi) {
+          this.loadingUser = true
           let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users' + plus
           axios(url).then(resp => {
             if (resp.data.success == true) {
               this.users = resp.data.data
             }
             suksesFungsi(resp.data)
+            this.loadingUser = false
           })
         },
         getDosen (plus = '', suksesFungsi) {
@@ -418,6 +438,7 @@
           this.form.dosen.search = []
         },
         createDosen () {
+          this.loadingProses = true
           let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users'
           if (this.form.dosen.id_login == null) {
             alert('silahkan untuk mencari dosen terlebih dahulu.')
@@ -449,6 +470,7 @@
                   alert(resp.data.msg)
                 }
               }
+              this.loadingProses = false
             })
           }
         },
@@ -476,6 +498,7 @@
           this.form.mahasiswa.search = []
         },
         createMahasiswa () {
+          this.loadingProses = true
           let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users'
           if (this.form.mahasiswa.id_login == null) {
             alert('silahkan untuk mencari mahasiswa terlebih dahulu.')
@@ -507,6 +530,7 @@
                   alert(resp.data.msg)
                 }
               }
+              this.loadingProses = false
             })
           }
         },
@@ -520,6 +544,7 @@
         hapusUser () {
           let r = confirm("Apakah mau di hapus ?")
           if (r == true) {
+            this.loadingProses = true
             let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users/' + this.detail.id_user
             axios.delete(url).then(resp => {
               if (resp.data.success == true) {
@@ -531,10 +556,12 @@
               if (resp.data.success == false) {
                 alert(resp.data.msg)
               }
+              this.loadingProses = false
             })
           }
         },
         updateUser (json, sukses) {
+          this.loadingProses = true
           let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users/' + this.detail.id_user
           axios.put(url, json).then(resp => {
             if (resp.data.success == true) {
@@ -545,33 +572,40 @@
             if (resp.data.success == false) {
               alert(resp.data.msg)
             }
+            this.loadingProses = false
           })
         },
         updateUsername () {
+          this.loadingProses = true
           this.updateUser({
             username: this.form.update.username
           }, data => {
             this.open.username = false
             this.form.update.username = null
             this.detail.username = data.data_back.username
+            this.loadingProses = false
           })
         },
         updatePassword () {
+          this.loadingProses = true
           this.updateUser({
             password: this.form.update.password
           }, data => {
             this.open.password = false
             this.form.update.password = null
             this.detail.password = data.data_back.password
+            this.loadingProses = false
           })
         },
         updateLevel () {
+          this.loadingProses = true
           this.updateUser({
             level: this.form.update.level
           }, data => {
             this.open.level = false
             this.form.update.level = null
             this.detail.level = data.data_back.level
+            this.loadingProses = false
           })
         },
         getCountUser(plus = '', sukses) {

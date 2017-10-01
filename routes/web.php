@@ -1,5 +1,6 @@
 <?php 
 
+$app->get('/', 'App\Controllers\HomesideController:index')->setName('homeside');
 $app->get('/login/admin', 'App\Controllers\AdminController:login')->setName('admin-login');
 $app->get('/logout/admin', 'App\Controllers\AdminController:logout')->setName('admin-logout');
 
