@@ -1,0 +1,629 @@
+{% extends "admin/include/layout.twig" %}
+
+{% block title %}
+  Edit User
+{% endblock %}
+
+
+{% block css %}
+  <style>
+    .menu-tab {
+      width:50%;
+      float:left;
+      text-align:center;
+      padding:10px;
+      text-decoration:none;
+    }
+    .menu-tab:first-child {
+      border-right: 1px solid rgba(0,0,0,0.1);
+    }
+    .menu-tab:hover {
+      background-color:#2f333e;
+      color:white;
+      text-decoration:none;
+    }
+    .menu-tab-hovered {
+      background-color:rgba(0,0,0,0.5);
+      color:white;
+      text-decoration:none;
+    }
+    .clear {
+      clear:both;
+    }
+    .li-search-mahasiswa {
+      width:100%;
+      padding:5px;
+      list-style-type: none;
+      border-bottom:1px solid rgba(0,0,0,0.1);
+      cursor:pointer;
+    }
+    .li-search-mahasiswa:hover {
+      background-color:rgba(0,0,0,0.3);
+    }
+    .border-bottom {
+      border-bottom:1px solid rgba(0,0,0,0.1);
+    }
+    .relative {
+      position:relative;
+    }
+  </style>
+{% endblock %}
+
+
+{% block content %}
+  <div style="min-height:600px;">
+    <header class="page-header"  style="margin-bottom:15px;">
+      <div class="container-fluid">
+        <h2 class="no-margin-bottom">SISTEM INFORMASI/TEKNIK INFORMATIKA</h2>
+        <span class="hidden-xs">Edit User</span>
+      </div>
+    </header>
+
+    {# <section class="dashboard-header"> #}
+      
+      <div class="statistics col-lg-12">
+        <div class="row">
+          <div class="statistic d-flex align-items-center bg-white has-shadow col-lg-3"
+          style="margin-right:20px;margin-left:15px;">
+            <div class="icon bg-red"><i class="fa fa-tasks"></i></div>
+            <div class="text"><strong>${countUser.all}</strong><br><small>User</small></div>
+          </div>
+          <div class="statistic d-flex align-items-center bg-white has-shadow col-lg-3"
+          style="margin-right:20px;">
+            <div class="icon bg-green"><i class="fa fa-calendar-o"></i></div>
+            <div class="text"><strong>${countUser.mahasiswa}</strong><br><small>User dari mahasiswa</small></div>
+          </div>
+          <div class="statistic d-flex align-items-center bg-white has-shadow col-lg-3"
+          style="margin-right:20px;">
+            <div class="icon bg-orange"><i class="fa fa-paper-plane-o"></i></div>
+            <div class="text"><strong>${countUser.dosen}</strong><br><small>user dari dosen</small></div>
+          </div>
+          <div style="clear:both;"></div>
+          <div class="statistic d-flex align-items-center bg-white has-shadow col-lg-2"
+          style="margin-right:0px;">
+            <div class="icon bg-orange"><i class="fa fa-paper-plane-o"></i></div>
+            <div class="text"><strong>147</strong><br><small>user dari dosen</small></div>
+          </div>
+          <div style="clear:both;"></div>
+        </div>
+      </div>
+      
+    {# </section> #}
+
+
+    <div class="col-lg-12">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card">
+            <div style="border-bottom:1px solid rgba(0,0,0,0.1);">
+              <a href="" class="menu-tab"
+                v-bind:class ="{'menu-tab-hovered': open.mahasiswa}" 
+                @click.prevent = "open.mahasiswa = true;open.dosen = false;"> 
+                Mahasiswa 
+              </a>
+              <a href="" class="menu-tab" 
+              v-bind:class ="{'menu-tab-hovered': open.dosen}" 
+              @click.prevent = "open.mahasiswa = false;open.dosen = true;"> Dosen </a>
+              <div class="clear"></div>
+            </div>
+            <div class="card-body" v-if="open.mahasiswa == true">
+              <form @submit.prevent = "createMahasiswa()">
+                <div v-if="form.mahasiswa.id_login != null" 
+                style="padding:10px;position:relative;">
+                  <div> ${form.mahasiswa.id_login.npm} </div>
+                  <small> ${form.mahasiswa.id_login.nama_mahasiswa} </small>
+                  <i class="fa fa-times fa-2x" 
+                  style="position:absolute;right:10px;top:0px;color:crimson;cursor:pointer;"
+                  @click.prevent = "form.mahasiswa.id_login = null"
+                  aria-hidden="true"></i>
+                </div>
+                <div class="form-group" style="position:relative;"
+                v-if="form.mahasiswa.id_login == null">
+                  <label class="form-control-label">NPM</label>
+                  <input type="text" @keyup = "searchMahasiswa()" 
+                  v-model="form.mahasiswa.npm"
+                  placeholder="NPM" class="form-control">
+                  <div v-if="form.mahasiswa.search.length > 0">
+                    <li v-for="(item, index) in form.mahasiswa.search" 
+                    @click.prevent = "klikSearchMahasiswa(item)"
+                    class="li-search-mahasiswa">
+                      <div>${item.npm}</div>
+                      <small>${item.nama_mahasiswa}</small>
+                    </li>
+                  </div>
+                </div>
+                <div class="form-group">       
+                  <label class="form-control-label">Username</label>
+                  <input type="text" v-model="form.mahasiswa.username"
+                  placeholder="Username" class="form-control">
+                </div>
+                <div class="form-group">       
+                  <label class="form-control-label">Password</label>
+                  <input type="password" v-model="form.mahasiswa.password"
+                  placeholder="Password" class="form-control">
+                </div>
+                <div class="form-group">       
+                  <input type="submit" value="Simpan" class="btn btn-primary pull-right"
+                  @click.prevent = "createMahasiswa()">
+                </div>
+              </form>
+            </div>
+
+            <div class="card-body" v-if="open.dosen == true">
+              <form @submit.prevent = "createDosen()">
+                <div v-if="form.dosen.id_login != null" 
+                style="padding:10px;position:relative;">
+                  <div> ${form.dosen.id_login.kode_dosen} </div>
+                  <small> ${form.dosen.id_login.nama_dosen} </small>
+                  <i class="fa fa-times fa-2x" 
+                  style="position:absolute;right:10px;top:0px;color:crimson;cursor:pointer;"
+                  @click.prevent = "form.dosen.id_login = null"
+                  aria-hidden="true"></i>
+                </div>
+                <div class="form-group" style="position:relative;"
+                v-if="form.dosen.id_login == null">
+                  <label class="form-control-label">Kode Dosen</label>
+                  <input type="text" @keyup = "searchDosen()" 
+                  v-model="form.dosen.kode_dosen"
+                  placeholder="Kode dosen" class="form-control">
+                  <div v-if="form.dosen.search.length > 0">
+                    <li v-for="(item, index) in form.dosen.search" 
+                    @click.prevent = "klikSearchDosen(item)"
+                    class="li-search-mahasiswa">
+                      <div>${item.kode_dosen}</div>
+                      <small>${item.nama_dosen}</small>
+                    </li>
+                  </div>
+                </div>
+                <div class="form-group">       
+                  <label class="form-control-label">Username</label>
+                  <input type="text" v-model="form.dosen.username"
+                  placeholder="Username" class="form-control">
+                </div>
+                <div class="form-group">       
+                  <label class="form-control-label">Password</label>
+                  <input type="password" v-model="form.dosen.password" 
+                  placeholder="Password" class="form-control">
+                </div>
+                <div class="form-group">       
+                  <input @click.prevent="createDosen()" 
+                  type="submit" value="Simpan" 
+                  class="btn btn-primary pull-right">
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card">
+            <div class="form-group" style="margin-bottom:7px;">       
+              <input type="text" v-model="form.pencarian" @keyup.enter = "pencarian()"
+              placeholder="Cari username" class="form-control">
+            </div>
+            <div style="padding:0px 0px 7px 20px;font-size:24px;">
+              User
+            </div>
+            <div class="card-body" style="padding-top:0px;border-top:1px solid rgba(0,0,0,0.1);">
+              <div style="min-height:320px;">
+                <li v-for="(item, index) in users" 
+                @click.prevent = "toDetail(item, index)"
+                class="li-search-mahasiswa" style="padding:10px;">
+                  <div>${item.username}</div>
+                  <small v-if="item.level == 2"> Mahasiswa </small>
+                  <small v-if="item.level == 1"> Dosen </small>
+                </li>
+              </div>
+              <div style="margin-top:15px;text-align:center;">
+                <b> ${page} / ${jumlahPaging}</b>
+                <input @click.prevent="prev()" 
+                    type="submit" value="Prev" 
+                    class="btn btn-primary pull-left">
+                <input @click.prevent="next()" 
+                    type="submit" value="Next" 
+                    class="btn btn-primary pull-right">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="card" v-if="detail != null">
+            <div style="padding:10px 0px 7px 20px;font-size:24px;width:100%;">
+              Detail
+              <i class="fa fa-times fa-2x" 
+              style="position:absolute;right:10px;top:0px;color:crimson;cursor:pointer;"
+              @click.prevent = "detail = null"
+              aria-hidden="true"></i>
+            </div>
+            <div class="card-body" 
+            style="padding-top:10px;padding-bottom:10px;
+            border-top:1px solid rgba(0,0,0,0.1);">
+              <div style="padding:10px;text-align:center;"
+              class="border-bottom relative">
+                <b>ID</b>
+                <div>${detail.id_user}</div>
+              </div>
+              <div style="padding:10px;text-align:center;"
+              class="border-bottom relative">
+                <b>Username</b>
+                <div v-if="open.username == false">${detail.username}</div>
+                <div v-if="open.username == true">
+                  <div class="form-group">
+                    <input type="text" v-model="form.update.username"
+                    @keyup.enter = "updateUsername()"
+                    placeholder="Username" class="form-control">
+                  </div>
+                </div>
+                <i class="fa fa-pencil fa-2x" 
+                style="position:absolute;right:10px;top:0px;cursor:pointer;color:dodgerblue;"
+                @click.prevent = "open.username = true; form.update.username = detail.username"
+                v-if="open.username == false"
+                aria-hidden="true"></i>
+                <i class="fa fa-times fa-2x" 
+                style="position:absolute;right:10px;top:0px;cursor:pointer;color:crimson;"
+                @click.prevent = "open.username = false"
+                v-if="open.username == true"
+                aria-hidden="true"></i>
+              </div>
+
+              <div style="padding:10px;text-align:center;"
+              class="border-bottom relative">
+                <b>Password</b>
+                <div v-if="open.password == false">${detail.password}</div>
+                <div v-if="open.password == true">
+                  <div class="form-group">
+                    <input type="text" v-model="form.update.password"
+                    @keyup.enter = "updatePassword()"
+                    placeholder="password" class="form-control">
+                  </div>
+                </div>
+                <i class="fa fa-pencil fa-2x" 
+                style="position:absolute;right:10px;top:0px;cursor:pointer;color:dodgerblue;"
+                @click.prevent = "open.password = true; form.update.password = detail.password"
+                v-if="open.password == false"
+                aria-hidden="true"></i>
+                <i class="fa fa-times fa-2x" 
+                style="position:absolute;right:10px;top:0px;cursor:pointer;color:crimson;"
+                @click.prevent = "open.password = false"
+                v-if="open.password == true"
+                aria-hidden="true"></i>
+              </div>
+
+              <div style="padding:10px;text-align:center;"
+              class="border-bottom relative">
+                <b>Level</b>
+                <div v-if="open.level == false">
+                  <span v-if="detail.level == 1">Dosen</span>
+                  <span v-if="detail.level == 2">Mahasiswa</span>
+                </div>
+                <div v-if="open.level == true">
+                  <div class="form-group">
+                    <select class="form-control" v-model="form.update.level">
+                      <option value="1">Dosen</option>
+                      <option value="2">Mahasiswa</option>
+                    </select>
+                    <input @click.prevent="updateLevel()" 
+                    type="submit" value="Update level" 
+                    class="btn btn-primary btn-block">
+                  </div>
+                </div>
+                <i class="fa fa-pencil fa-2x" 
+                style="position:absolute;right:10px;top:0px;cursor:pointer;color:dodgerblue;"
+                @click.prevent = "open.level = true; form.update.level = detail.level"
+                v-if="open.level == false"
+                aria-hidden="true"></i>
+                <i class="fa fa-times fa-2x" 
+                style="position:absolute;right:10px;top:0px;cursor:pointer;color:crimson;"
+                @click.prevent = "open.level = false"
+                v-if="open.level == true"
+                aria-hidden="true"></i>
+              </div>
+
+              <div style="padding:10px;text-align:center;">
+                <input @click.prevent="hapusUser()" 
+                  type="submit" value="Hapus" 
+                  class="btn btn-danger pull-right">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block vue %}
+  <script>
+    new Vue({
+      el: '#app',
+      delimiters: ['${', '}'],
+      data () {
+        return {
+          page: 1,
+          limit: 5,
+          offset: 0,
+          countUser: {
+            all: 0,
+            mahasiswa: 0,
+            dosen: 0
+          },
+          detail: null,
+          deleteConfirm: false,
+          users: [],
+          open: {
+            mahasiswa: true,
+            dosen: false,
+            username: false,
+            password: false,
+            level: false
+          },
+          form: {
+            pencarian: null,
+            update: {
+              username: null,
+              password: null,
+              level: null
+            },
+            mahasiswa: {
+              search: [],
+              npm: null,
+              id_login: null,
+              username: null,
+              password: null,
+              level: 2
+            },
+            dosen: {
+              search: [],
+              kode_dosen: null,
+              id_login: null,
+              username: null,
+              password: null,
+              level: 1
+            }
+          }
+        }
+      },
+      methods: {
+        getUsers (plus = '', suksesFungsi) {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users' + plus
+          axios(url).then(resp => {
+            if (resp.data.success == true) {
+              this.users = resp.data.data
+            }
+            suksesFungsi(resp.data)
+          })
+        },
+        getDosen (plus = '', suksesFungsi) {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/dosen' + plus
+          axios(url).then(resp => {
+            suksesFungsi(resp.data)
+          })
+        },
+        searchDosen () {
+          if (this.form.dosen.kode_dosen.length > 0) {
+            let plus = '?search_what=kode_dosen&search_value=' + this.form.dosen.kode_dosen
+            this.getDosen(plus, resp => {
+              if (resp.success == true) {
+                this.form.dosen.search = resp.data
+              }
+            })
+          } else {
+            this.form.dosen.search = []
+          }
+        },
+        klikSearchDosen (item) {
+          this.form.dosen.id_login = item
+          this.form.dosen.kode_dosen = null
+          this.form.dosen.search = []
+        },
+        createDosen () {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users'
+          if (this.form.dosen.id_login == null) {
+            alert('silahkan untuk mencari dosen terlebih dahulu.')
+          } else {
+            let body = {
+              id_login: this.form.dosen.id_login.id_dosen,
+              username: this.form.dosen.username,
+              password: this.form.dosen.password,
+              level: 1
+            }
+            axios.post(url, body).then(resp => {
+              if (resp.data.success == true) {
+                alert('Berhasil menambahkan')
+                this.form.dosen.id_login = null
+                this.form.dosen.username = null
+                this.form.dosen.password = null
+                this.getCount()
+                this.getUsers('', data => {})
+              }
+              if (resp.data.success == false) {
+                if (resp.data.code == 1) {
+                  if (typeof resp.data.msg.username === 'object') {
+                    alert('username :\n ' + resp.data.msg.username.join('\n'))
+                  }
+                  if (typeof resp.data.msg.password === 'object') {
+                    alert('password :\n ' + resp.data.msg.password.join('\n'))
+                  }
+                } else {
+                  alert(resp.data.msg)
+                }
+              }
+            })
+          }
+        },
+        getMahasiswa (plus = '', suksesFungsi) {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/mahasiswa' + plus
+          axios(url).then(resp => {
+            suksesFungsi(resp.data)
+          })
+        },
+        searchMahasiswa () {
+          if (this.form.mahasiswa.npm.length > 0) {
+            let plus = '?search_what=npm&search_value=' + this.form.mahasiswa.npm
+            this.getMahasiswa(plus, resp => {
+              if (resp.success == true) {
+                this.form.mahasiswa.search = resp.data
+              }
+            })
+          } else {
+            this.form.mahasiswa.search = []
+          }
+        },
+        klikSearchMahasiswa (item) {
+          this.form.mahasiswa.id_login = item
+          this.form.mahasiswa.npm = null
+          this.form.mahasiswa.search = []
+        },
+        createMahasiswa () {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users'
+          if (this.form.mahasiswa.id_login == null) {
+            alert('silahkan untuk mencari mahasiswa terlebih dahulu.')
+          } else {
+            let body = {
+              id_login: this.form.mahasiswa.id_login.id_mahasiswa,
+              username: this.form.mahasiswa.username,
+              password: this.form.mahasiswa.password,
+              level: 2
+            }
+            axios.post(url, body).then(resp => {
+              if (resp.data.success == true) {
+                alert('Berhasil menambahkan')
+                this.form.mahasiswa.id_login = null
+                this.form.mahasiswa.username = null
+                this.form.mahasiswa.password = null
+                this.getCount()
+                this.getUsers('', data => {})
+              }
+              if (resp.data.success == false) {
+                if (resp.data.code == 1) {
+                  if (typeof resp.data.msg.username === 'object') {
+                    alert('username :\n ' + resp.data.msg.username.join('\n'))
+                  }
+                  if (typeof resp.data.msg.password === 'object') {
+                    alert('password :\n ' + resp.data.msg.password.join('\n'))
+                  }
+                } else {
+                  alert(resp.data.msg)
+                }
+              }
+            })
+          }
+        },
+        toDetail (item, index) {
+          this.detail = item
+          this.detail.index = index
+          this.detail.openUsername = false
+          this.detail.openPassword = false
+          this.detail.openLevel = false
+        },
+        hapusUser () {
+          let r = confirm("Apakah mau di hapus ?")
+          if (r == true) {
+            let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users/' + this.detail.id_user
+            axios.delete(url).then(resp => {
+              if (resp.data.success == true) {
+                alert(resp.data.msg)
+                this.detail = null
+                this.getCount()
+                this.getUsers('', data => {})
+              }
+              if (resp.data.success == false) {
+                alert(resp.data.msg)
+              }
+            })
+          }
+        },
+        updateUser (json, sukses) {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users/' + this.detail.id_user
+          axios.put(url, json).then(resp => {
+            if (resp.data.success == true) {
+              alert(resp.data.msg)
+              sukses(resp.data)
+              this.getUsers('', data => {})
+            }
+            if (resp.data.success == false) {
+              alert(resp.data.msg)
+            }
+          })
+        },
+        updateUsername () {
+          this.updateUser({
+            username: this.form.update.username
+          }, data => {
+            this.open.username = false
+            this.form.update.username = null
+            this.detail.username = data.data_back.username
+          })
+        },
+        updatePassword () {
+          this.updateUser({
+            password: this.form.update.password
+          }, data => {
+            this.open.password = false
+            this.form.update.password = null
+            this.detail.password = data.data_back.password
+          })
+        },
+        updateLevel () {
+          this.updateUser({
+            level: this.form.update.level
+          }, data => {
+            this.open.level = false
+            this.form.update.level = null
+            this.detail.level = data.data_back.level
+          })
+        },
+        getCountUser(plus = '', sukses) {
+          let url = window.location.origin + '{{ base_url() }}' + '/api/v1/users/count' + plus
+          axios.get(url).then(resp => {
+            if (resp.data.success == true) {
+              sukses(resp.data)
+            }
+          })
+        },
+        getCount () {
+          this.getCountUser('', data => {
+            this.countUser.all = data.count
+          })
+          this.getCountUser('?mahasiswa=1', data => {
+            this.countUser.mahasiswa = data.count
+          })
+          this.getCountUser('?dosen=1', data => {
+            this.countUser.dosen = data.count
+          })
+        },
+        pencarian () {
+          let plus = '?search_value=' + this.form.pencarian
+          this.getUsers(plus, data => {})
+        },
+        next () {
+          if (this.page < this.jumlahPaging) {
+            this.offset += 5
+            this.page += 1
+            let plus = '?limit=' + this.limit + '&offset=' + this.offset
+            this.getUsers(plus, data => {})
+          }
+        },
+        prev () {
+          if (this.page > 1) {
+            this.offset -= 5
+            this.page -= 1
+            let plus = '?limit=' + this.limit + '&offset=' + this.offset
+            this.getUsers(plus, data => {})
+          }
+        }
+      },
+      computed: {
+        jumlahPaging () {
+          let jp = (this.countUser.all / this.limit)
+          return Math.ceil(jp)
+        }
+      },
+      mounted () {
+        this.getUsers('', data => {})
+        this.getCount()
+      }
+    })
+  </script>
+{% endblock %}

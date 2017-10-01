@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bootstrap Dashboard by Bootstrapious.com</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/css/bootstrap.min.css">
+    <!-- Google fonts - Roboto -->
+    {# <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700"> #}
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="{{ base_url() }}/resources/assets/img/favicon.ico">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/fa/css/font-awesome.min.css">
+  </head>
+  <body>
+    <div class="page login-page" id="app">
+      <div class="container d-flex align-items-center">
+        <div class="form-holder has-shadow">
+          <div class="row">
+            <!-- Logo & Information Panel-->
+            <div class="col-lg-6">
+              <div class="info d-flex align-items-center">
+                <div class="content">
+                  <div class="logo">
+                    <h1>STIKOM BINANIAGA</h1>
+                  </div>
+                  <p>BOGOR</p>
+                </div>
+              </div>
+            </div>
+            <!-- Form Panel    -->
+            <div class="col-lg-6 bg-white">
+              <div class="form d-flex align-items-center">
+                <div class="content" v-if="loading == true">
+                  <i class="fa fa-cog fa-spin fa-5x fa-fw" style="margin:0 auto;"></i>
+                  <span class="sr-only">Loading...</span>
+                  <span style="font-size:24px;" >Loading...</span>
+                </div>
+                <div class="content" v-if="loading == false">
+                  <form id="login-form" method="post" @submit.prevent = "login()">
+                    <div class="form-group">
+                      <input type="text" v-model="form.username" class="form-control" placeholder="Username" name="username">
+                      <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                      <span>
+                        <small style="display:block;color:crimson;" v-for="item in usernameErrs">
+                          ${ item }
+                        </small> 
+                      </span>
+                    </div>
+                    <div class="form-group">
+                      <input type="password" v-model="form.password" class="form-control" placeholder="Password" name="password">
+                      <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                      <span>
+                        <small style="display:block;color:crimson;" v-for="item in passwordErrs">
+                          ${ item }
+                        </small> 
+                      </span>
+                      <div class="row">
+                     <!-- /.col -->
+                        <div class="col-xs-4">
+                          <input @click.prevent = "login()" type="submit" class="btn btn-primary btn-block btn-flat" name="login" value="Login">
+                        </div>
+
+                      </div>
+                    <!-- /.col -->
+                    </div>
+                    
+                    <!-- This should be submit button but I replaced it with <a> for demo purposes-->
+                  </form><a href="#" class="forgot-pass">Forgot Password?</a><br><small>Do not have an account? </small><a href="register.html" class="signup">Signup</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="copyrights text-center">
+        <p>Design by <a href="https://bootstrapious.com/admin-templates" class="external">Bootstrapious</a></p>
+        <!-- Please do not remove the backlink to us unless you support further theme's development at https://bootstrapious.com/donate. It is part of the license conditions. Thank you for understanding :)-->
+      </div>
+    </div>
+    <!-- Javascript files-->
+    <script src="{{ base_url() }}/resources/assets/js/jquery.js"></script>
+    <script src="{{ base_url() }}/resources/assets/js/tether.min.js"></script>
+    <script src="{{ base_url() }}/resources/assets/js/bootstrap.min.js"></script>
+    <script src="{{ base_url() }}/resources/assets/js/jquery.cookie.js"> </script>
+    <script src="{{ base_url() }}/resources/assets/js/jquery.validate.min.js"></script>
+    <script src="{{ base_url() }}/resources/assets/js/front.js"></script>
+    <script src="{{ base_url() }}/resources/assets/js/vue.js"></script>
+    <script src="{{ base_url() }}/resources/assets/js/axios.js"></script>
+    <script>
+      var app = new Vue({
+        el: '#app',
+        delimiters: ['${', '}'],
+        data: {
+          loading: false,
+          form: {
+            username: null,
+            password: null
+          },
+          usernameErrs: [],
+          passwordErrs: []
+        },
+        methods: {
+          login () {
+            this.loading = true
+            let url = window.location.origin + '{{ base_url() }}' + '/api/admin-login'
+            axios.post(url, this.form)
+            .then(resp => {
+              if (resp.data.success == false) {
+                if (resp.data.code == 1) {
+                  this.usernameErrs = resp.data.msg.username
+                  this.passwordErrs = resp.data.msg.password
+                } else {
+                  this.usernameErrs = []
+                  this.passwordErrs = []
+                  alert(resp.data.msg)
+                }
+              }
+              if (resp.data.success == true) {
+                this.usernameErrs = []
+                this.passwordErrs = []
+                window.location = window.location.origin + '{{ base_url() }}' + '/admin/dashboard'
+              }
+              this.loading = false
+            })
+          }
+        }
+      })
+    </script>
+  </body>
+</html>
