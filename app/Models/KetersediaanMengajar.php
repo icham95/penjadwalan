@@ -4,10 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Dosen extends Model
+class KetersediaanMengajar extends Model
 {
-  protected $table = "tbl_dosen";
+  protected $table = "tbl_ketersediaan_mengajar";
   protected $guarded = [];
-  protected $primaryKey = 'kd_dosen';
+  protected $primaryKey = 'kd_km';
   public $timestamps = false;
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/css/bootstrap.min.css">
+    <!-- Google fonts - Roboto -->
+    {# <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700"> #}
+    <!-- theme stylesheet-->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/css/style.default.css" id="theme-stylesheet">
+    <!-- Custom stylesheet - for your changes-->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/css/custom.css">
+    <!-- Favicon-->
+    <link rel="shortcut icon" href="{{ base_url() }}/resources/assets/img/stikom.png">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="{{ base_url() }}/resources/assets/fa/css/font-awesome.min.css">
+    <!-- you can replace it by local Font Awesome-->
+    {# <script src="{{ base_url() }}/resources/assets/js/usefa.js"></script> #}
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <div class="page home-page" id="app">
+    {# header #}
+    {% include 'admin/include/header.twig' %}
+    <div class="page-content d-flex align-items-stretch">
+    {# navbar #}
+    {% include 'admin/include/navbar.twig' %}
+    <div class="content-inner">
+    {# content #}
+    {% block content %}{% endblock %}
+    {# footer #}
+    {% include 'admin/include/footer.twig' %}
+    {% block vue %} {% endblock %}
+    {% include 'admin/include/bottom.twig' %}

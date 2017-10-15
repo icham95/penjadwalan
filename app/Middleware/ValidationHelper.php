@@ -12,7 +12,7 @@ class ValidationHelper
     return new Validation(\call_user_func([new ValidationHelper(), $fn_name]));
   }
 
-  public function login()
+  public function auth_dosen()
   {
     return [
       'username' => v::notBlank()->alnum()->noWhitespace()->length(1, 10),

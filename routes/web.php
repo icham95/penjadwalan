@@ -1,7 +1,7 @@
 <?php 
 
-$app->get('/login/admin', 'App\Controllers\AdminController:login')->setName('admin-login');
-$app->get('/logout/admin', 'App\Controllers\AdminController:logout')->setName('admin-logout');
+$app->get('/dosen/login', 'App\Controllers\Web\DosenController:login')->setName('dosen-login');
+$app->get('/dosen/logout', 'App\Controllers\Web\DosenController:logout')->setName('dosen-logout');
 
 $app->group('/admin', function () use ($app) {
   
