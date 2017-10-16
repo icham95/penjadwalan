@@ -111,7 +111,8 @@
         methods: {
           login () {
             this.loading = true
-            let url = window.location.origin + '{{ base_url() }}' + '/api/admin-login'
+            let url = window.location.origin + '{{ base_url() }}' + '/api/self/dosen/auth'
+            console.log(url)
             axios.post(url, this.form)
             .then(resp => {
               if (resp.data.success == false) {
@@ -123,13 +124,13 @@
                   this.passwordErrs = []
                   alert(resp.data.msg)
                 }
+                this.loading = false
               }
               if (resp.data.success == true) {
                 this.usernameErrs = []
                 this.passwordErrs = []
-                window.location = window.location.origin + '{{ base_url() }}' + '/admin/dashboard'
+                window.location = window.location.origin + '{{ base_url() }}' + '/dosen/dashboard'
               }
-              this.loading = false
             })
           }
         }

@@ -1,0 +1,151 @@
+{% extends "dosen/include/layout.twig" %}
+
+{% block title %}
+  Setting
+{% endblock %}
+
+{% block css %}
+  <style>
+    .li-link-list {
+      width:100%;
+      padding:5px;
+      list-style-type: none;
+      border-bottom:1px solid rgba(0,0,0,0.1);
+      cursor:pointer;
+    }
+    .li-link-list:hover {
+      color: dodgerblue;
+    }
+    .profile-pic {
+      text-align:center;
+      position:relative;
+    }
+    .profile-pic > img {
+      width: 120px;
+      border-radius: 120px;
+    }
+    .edit-profile-dosen input {
+      text-align: center;
+    }
+    .edit-profile-dosen-item {
+      box-sizing:border-box;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div style="min-height:600px;">
+    <header class="page-header">
+      <div class="container-fluid">
+        <h2 class="no-margin-bottom">SISTEM INFORMASI/TEKNIK INFORMATIKA</h2>
+      </div>
+    </header>
+
+    <div class="row" style="margin-left:0px;">
+
+      <div class="col-lg-3 col-md-6" style="margin-top:15px;padding-right:0px;">
+        <div class="card">
+          <div style="padding:10px 0px 7px 20px;font-size:24px;">
+            Settings
+          </div>
+          <div class="card-body" style="padding-top:10px;border-top:1px solid rgba(0,0,0,0.1);">
+            <div style="min-height:320px;">
+            
+              <li class="li-link-list"> 
+                <a href="" 
+                @click.prevent = "(openSetting != 1) ? openSetting = 1 : openSetting = 0"> 
+                  Profile 
+                </a> 
+              </li>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      {% include 'dosen/setting/edit-profile.twig' %}
+
+    </div>
+
+  </div>
+{% endblock %}
+
+{% block vue %}
+<script>
+  new Vue({
+    el: '#app',
+    delimiters: ['${', '}'],
+    data () {
+      return {
+        openSetting: 1,
+        editProfile: {
+          user: {
+            nip: {
+              edited: false,
+              value: '151515'
+            },
+            nama: {
+              edited: false,
+              value: 'nama'
+            },
+            alamat: {
+              edited: false,
+              value: 'alamat'
+            },
+            noHp: {
+              edited: false,
+              value: 'noHp'
+            },
+            username: {
+              edited: false,
+              value: 'username'
+            },
+            password: {
+              edited: false,
+              value: 'password'
+            }
+          }
+        }
+      }
+    },
+     methods: {
+       getUser () {
+         axios.get(window._baseurl + 'api/self/dosen/dosen/' + {{ session.dosen.id }})
+         .then(resp => {
+           return resp.data
+         }).then(data => {
+           let dosen = data.data[0]
+           this.editProfile.user.nip.value = dosen.nip
+           this.editProfile.user.nama.value = dosen.nama
+           this.editProfile.user.alamat.value = dosen.alamat
+           this.editProfile.user.noHp.value = dosen.no_hp
+           this.editProfile.user.username.value = dosen.username
+           this.editProfile.user.password.value = dosen.password
+         })
+       },
+       updateUser(index, val) {
+         let data = {}
+         data[index] = val
+         axios.put(window._baseurl + 'api/self/dosen/dosen/' + {{ session.dosen.id }}, data)
+         .then(resp => {
+           return resp.data
+         }).then(data => {
+           if (data.success == true) {
+             alert(index + ' berhasil di update')
+             if (index == 'no_hp') {
+               this.editProfile.user['noHp'].edited = false
+             } else {
+               this.editProfile.user[index].edited = false
+             }
+           } else {
+             alert(index + ' gagal di update')
+           }
+         })
+       }
+     },
+     mounted () {
+       this.getUser()
+     }
+  })
+</script>
+{% endblock %}

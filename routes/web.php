@@ -3,9 +3,9 @@
 $app->get('/dosen/login', 'App\Controllers\Web\DosenController:login')->setName('dosen-login');
 $app->get('/dosen/logout', 'App\Controllers\Web\DosenController:logout')->setName('dosen-logout');
 
-$app->group('/admin', function () use ($app) {
+$app->group('/dosen', function () use ($app) {
   
-  $app->get('/dashboard', 'App\Controllers\AdminController:dashboard')->setName('admin-dashboard');
-  $app->get('/edit-user', 'App\Controllers\AdminController:editUser')->setName('admin-edit-user');
+  $app->get('/dashboard', 'App\Controllers\Web\DosenController:dashboard')->setName('dosen-dashboard');
+  $app->get('/setting', 'App\Controllers\Web\DosenController:setting')->setName('dosen-setting');
   
-})->add(new App\Middleware\AuthAdmin($app->getContainer()->get('router')));
+})->add(new App\Middleware\Auth\Dosen($app->getContainer()->get('router')));

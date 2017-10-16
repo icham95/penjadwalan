@@ -38,7 +38,8 @@ class DosenController extends \App\Controllers\Controller
     }
 
     Session::set('dosen', [
-      'logged' => true
+      'logged' => true,
+      'id' => $user->kd_dosen
     ]);
 
     return $res->withJson([

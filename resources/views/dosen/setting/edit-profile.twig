@@ -1,0 +1,121 @@
+<div class="col-lg-4 col-md-6" v-if="openSetting == 1"
+  style="margin-top:15px;padding-right:0px;">
+    <div class="card">
+      <div style="padding:10px 0px 7px 20px;font-size:24px;">
+        Edit Profile
+      </div>
+      <div class="card-body" style="padding-top:10px;border-top:1px solid rgba(0,0,0,0.1);">
+        <div style="min-height:320px;" class="edit-profile-dosen">
+          <div class="profile-pic" style="margin-bottom:15px;">
+            <img src="{{ base_url() }}/resources/images/test.png" alt="">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href=""> Edit </a>
+            </div>
+          </div>
+
+          <div class="edit-profile-dosen-item" style="position:relative;text-align:center;margin-top:15px;border-bottom:1px solid grey;padding-bottom:10px;">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href="" 
+              @click.prevent = "(editProfile.user.nip.edited ? editProfile.user.nip.edited = false : editProfile.user.nip.edited = true)"> 
+                ${ (editProfile.user.nip.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <b> Nip </b>
+            <div v-if="editProfile.user.nip.edited == false">
+              ${ editProfile.user.nip.value }
+            </div>
+            <div v-else>
+              <input type="text" @keyup.enter.prevent="updateUser('nip', editProfile.user.nip.value)"
+              v-model="editProfile.user.nip.value">
+            </div>
+          </div>
+
+          <div class="edit-profile-dosen-item" style="position:relative;text-align:center;margin-top:15px;border-bottom:1px solid grey;padding-bottom:10px;">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href="" 
+              @click.prevent = "(editProfile.user.nama.edited ? editProfile.user.nama.edited = false : editProfile.user.nama.edited = true)"> 
+                ${ (editProfile.user.nama.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <b> nama </b>
+            <div v-if="editProfile.user.nama.edited == false"> 
+              ${ editProfile.user.nama.value } 
+            </div>
+            <div v-else>
+              <input type="text" @keyup.enter.prevent="updateUser('nama', editProfile.user.nama.value)" 
+              v-model="editProfile.user.nama.value">
+            </div>
+          </div>
+
+          <div class="edit-profile-dosen-item" style="position:relative;text-align:center;margin-top:15px;border-bottom:1px solid grey;padding-bottom:10px;">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href="" 
+              @click.prevent = "(editProfile.user.alamat.edited ? editProfile.user.alamat.edited = false : editProfile.user.alamat.edited = true)"> 
+                ${ (editProfile.user.alamat.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <b> alamat </b>
+            <div v-if="editProfile.user.alamat.edited == false"> 
+              ${ editProfile.user.alamat.value } 
+            </div>
+            <div v-else>
+              <input type="text" @keyup.enter.prevent="updateUser('alamat', editProfile.user.alamat.value)" 
+              v-model="editProfile.user.alamat.value">
+            </div>
+          </div>
+
+          <div class="edit-profile-dosen-item" style="position:relative;text-align:center;margin-top:15px;border-bottom:1px solid grey;padding-bottom:10px;">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href="" 
+              @click.prevent = "(editProfile.user.noHp.edited ? editProfile.user.noHp.edited = false : editProfile.user.noHp.edited = true)"> 
+                ${ (editProfile.user.noHp.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <b> noHp </b>
+            <div v-if="editProfile.user.noHp.edited == false"> 
+              ${ editProfile.user.noHp.value } 
+            </div>
+            <div v-else>
+              <input type="text" @keyup.enter.prevent="updateUser('no_hp', editProfile.user.noHp.value)"
+              v-model="editProfile.user.noHp.value">
+            </div>
+          </div>
+
+          <div class="edit-profile-dosen-item" style="position:relative;text-align:center;margin-top:15px;border-bottom:1px solid grey;padding-bottom:10px;">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href="" 
+              @click.prevent = "(editProfile.user.username.edited ? editProfile.user.username.edited = false : editProfile.user.username.edited = true)"> 
+                ${ (editProfile.user.username.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <b> username </b>
+            <div v-if="editProfile.user.username.edited == false"> 
+              ${ editProfile.user.username.value } 
+            </div>
+            <div v-else>
+              <input type="text" @keyup.enter.prevent="updateUser('username', editProfile.user.username.value)"
+              v-model="editProfile.user.username.value">
+            </div>
+          </div>
+
+          <div class="edit-profile-dosen-item" style="position:relative;text-align:center;margin-top:15px;border-bottom:1px solid grey;padding-bottom:10px;">
+            <div style="position:absolute;top:0px;right:0px;">
+              <a href="" 
+              @click.prevent = "(editProfile.user.password.edited ? editProfile.user.password.edited = false : editProfile.user.password.edited = true)"> 
+                ${ (editProfile.user.password.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <b> password </b>
+            <div v-if="editProfile.user.password.edited == false"> 
+              ${ editProfile.user.password.value } 
+            </div>
+            <div v-else>
+              <input type="text" @keyup.enter.prevent="updateUser('password', editProfile.user.password.value)"
+              v-model="editProfile.user.password.value">
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
