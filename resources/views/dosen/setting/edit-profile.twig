@@ -1,15 +1,32 @@
 <div class="col-lg-4 col-md-6" v-if="openSetting == 1"
   style="margin-top:15px;padding-right:0px;">
     <div class="card">
-      <div style="padding:10px 0px 7px 20px;font-size:24px;">
-        Edit Profile
+      <div style="padding:10px;background-color:#2f333e;color:white;">
+        <i class="fa fa-book"></i> Setting
       </div>
       <div class="card-body" style="padding-top:10px;border-top:1px solid rgba(0,0,0,0.1);">
         <div style="min-height:320px;" class="edit-profile-dosen">
           <div class="profile-pic" style="margin-bottom:15px;">
-            <img src="{{ base_url() }}/resources/images/test.png" alt="">
             <div style="position:absolute;top:0px;right:0px;">
-              <a href=""> Edit </a>
+              <a href="" 
+              @click.prevent = "(editProfile.user.foto.edited ? editProfile.user.foto.edited = false : editProfile.user.foto.edited = true)"> 
+                ${ (editProfile.user.foto.edited ? 'cancel' : 'edit') }
+              </a>
+            </div>
+            <div v-if="editProfile.user.foto.edited == false">
+              <img v-if="editProfile.user.foto.value == null" src="{{ base_url() }}/resources/images/test.png" alt="">
+              <img v-if="editProfile.user.foto.value != null" 
+              :src="'{{ base_url() }}/resources/images/' + editProfile.user.foto.value " alt="">
+            </div>
+            <div v-else>
+              <div v-if="editProfile.user.foto.tmp == null"
+              style="width:120px;height:120px;background-color:grey;border-radius:120px;display:inline-block;"></div>
+              <img v-if="editProfile.user.foto.tmp != null" 
+              :src="editProfile.user.foto.tmp" alt="">
+              <input type="file" @change.prevent = "onChangePic" style="display:block;margin:0 auto;">
+              <input type="submit" v-if="editProfile.user.foto.tmp != null"
+              @click.prevent = "updateUserPic"
+              value="Upload" class="form-control btn btn-primary" style="margin:10px 0;">
             </div>
           </div>
 

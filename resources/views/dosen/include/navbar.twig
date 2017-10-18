@@ -2,16 +2,17 @@
         <nav class="side-navbar">
           <!-- Sidebar Header-->
           <div class="sidebar-header d-flex align-items-center">
-            <div class="avatar"><img src="{{ base_url() }}/resources/assets/img/stikom.png" alt="..." class="img-fluid rounded-circle"></div>
+            <div class="avatar"><img id="foto-dosen" src="{{ base_url() }}/resources/assets/img/stikom.png" alt="..." class="img-fluid rounded-circle"></div>
             <div class="title">
-              <h1 class="h4">Stikom Binaniaga</h1>
-              <p></p>
+              <h1 id="nama-dosen" class="h4">Hera</h1>
+              <p>Dosen</p>
             </div>
           </div>
           <!-- Sidebar Navidation Menus--><span class="heading">BOGOR</span>
           <ul class="list-unstyled">
-            <li> <a href="{{ path_for('dosen-dashboard') }}"><i class="icon-home"></i>Home</a></li>
-            <li> <a href="ketersedian.php"> <i class="fa fa-bar-chart"></i>Ketersedian Megajar </a></li>
-            <li> <a href="lihat_jadwal.php"> <i class="icon-padnote"></i>Lihat Jadwal </a></li>
-            <li> <a href="{{ path_for('dosen-setting') }}"><i class="icon-home"></i>Setting</a></li>
+            <li> <a href="{{ path_for('dosen-dashboard') }}"><i class="fa fa-home"></i>Home</a></li>
+            <li> <a href="{{ path_for('dosen-km') }}"> <i class="fa fa-book"></i>Ketersedian Megajar </a></li>
+            <li> <a href="lihat_jadwal.php"> <i class="fa fa-bookmark"></i>Lihat Jadwal </a></li>
+            <li> <a href="{{ path_for('dosen-setting') }}"><i class="fa fa-gear"></i>Setting</a></li>
         </nav>
+        

@@ -1,0 +1,214 @@
+{% extends "dosen/include/layout.twig" %}
+
+{% block title %}
+  Ketersediaan mengajar
+{% endblock %}
+
+{% block css %}
+  <style>
+    
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div style="min-height:600px;">
+  <header class="page-header">
+    <div class="container-fluid">
+      <h2 class="no-margin-bottom">SISTEM INFORMASI/TEKNIK INFORMATIKA</h2>
+      <span class="hidden-xs">Ketersediaan mengajar</span>
+    </div>
+  </header>
+
+  <div class="row" style="margin-left:0px;margin-top:15px;margin-right:0px;">
+
+    {% include 'dosen/km/menu.twig' %}
+
+    <div class="col-lg-12" v-if="open == 0">
+      <div class="row">
+        {% include 'dosen/km/pencarian/search.twig' %}
+        {% include 'dosen/km/pencarian/table.twig' %}
+      </div>
+    </div>
+
+    <div class="col-lg-12" v-if="open == 1">
+      <div class="row">
+        {% include 'dosen/km/buat/form.twig' %}
+        {% include 'dosen/km/buat/table.twig' %}
+      </div>
+    </div>
+    
+  </div>
+
+  </div>
+{% endblock %}
+
+{% block vue %}
+<script>
+  new Vue({
+    el: '#app',
+    delimiters: ['${', '}'],
+    data () {
+      return {
+        open: 1,
+        loading: {
+          table: true
+        },
+        tahunAkademik: [],
+        createKmData: {
+          tahun_akademik: null,
+          post: {
+            kd_tahun_akademik: null,
+            semester: null,
+            hari: null,
+            waktu_mulai: null,
+            waktu_akhir: null
+          }
+        },
+        km: [],
+        kmSaya: [],
+        search: {
+          tahun1: null,
+          tahun2: null,
+          semester: null,
+          hari: null,
+          waktu_mulai: null,
+          waktu_akhir: null
+        }
+      }
+    },
+    methods: {
+      getTahunAkademik () {
+        let url = window._baseurl + 'api/self/dosen/tahun-akademik'
+        axios.get(url).then(resp => {
+          return resp.data
+        }).then(data => {
+          this.tahunAkademik = data.data
+        })
+      },
+      getKm(fungsi = null, limit = null, offset = null, orderBy = null, 
+            orderValue = null, whereBy = null, whereValue = null,
+            tahun = null, semester = null, hari = null, waktu_mulai = null,
+            waktu_akhir = null) {
+        this.loading.table = true
+        let url = window._baseurl + 'api/self/dosen/ketersediaan-mengajar'
+        let params = {
+          limit, offset, orderBy, orderValue, whereBy, whereValue,
+          tahun, semester, hari, waktu_mulai, waktu_akhir
+        }
+        axios.get(url,{params})
+        .then(resp => {
+          return resp.data
+        }).then(data => {
+          if (fungsi == null) {
+            this.km = data.data
+          } else {
+            fungsi(data)
+          }
+          this.loading.table = false
+        })
+      },
+      getKmSaya() {
+        this.getKm(data => {
+          let km = data.data
+          for(let i = 0; i < km.length; i++) {
+            km[i]['edited'] = {
+              temp: {
+                hari: null,
+                semester: null,
+                waktu_mulai: null,
+                waktu_akhir: null,
+                kd_tahun_akademik: null
+              },
+              open: {
+                all: false,
+                hari: false,
+                semester: false,
+                waktu_mulai: false,
+                waktu_akhir: false,
+                kd_tahun_akademik: false
+              }
+            }
+          }
+          this.kmSaya = km
+        }, null, null, null, null, 'kd_dosen', window._session.id)
+      },
+      searchKm() {
+        let tahun
+        if (this.search.tahun1 != null && this.search.tahun2 != null) {
+          tahun = this.search.tahun1 + '/' + this.search.tahun2
+        } else {
+          tahun = null
+        }
+        this.getKm(null, null, null, null, 'desc', null, null, 
+        tahun, this.search.semester, this.search.hari,
+        this.search.waktu_mulai, this.search.waktu_akhir)
+      },
+      reset() {
+        this.search.tahun1= null
+        this.search.tahun2= null
+        this.search.semester= null
+        this.search.hari= null
+        this.search.waktu_mulai= null
+        this.search.waktu_akhir= null
+        this.getKm()
+      },
+      createKm() {
+        let url = window._baseurl + 'api/self/dosen/ketersediaan-mengajar/' + window._session.id
+        axios.post(url, this.createKmData.post).then(resp => {
+          return resp.data
+        }).then(resp => {
+          if (resp.success == false) {
+            alert('gagal menyimpan.')
+          } else {
+            this.km.unshift(resp.data_back)
+            if (this.km.length > 9) {
+              this.km.pop(this.km.length)
+            }
+
+            this.kmSaya.unshift(resp.data_back)
+            if (this.kmSaya.length > 9) {
+              this.kmSaya.pop(this.kmSaya.length)
+            }
+            alert('berhasil menyimpan.')
+          }
+        })
+      },
+      kmSayaDelete(item, index) {
+        let r = confirm("Uh Oh, Aku (" + item.tahun_akademik[0].thn_akademik +") akan di hapus ?")
+        if (r == true) {
+          let url = window._baseurl + 'api/self/dosen/ketersediaan-mengajar/' + item.kd_km
+          axios.delete(url).then(resp => {
+            return resp.data
+          }).then(data => {
+            if (data.success == false) {
+              alert('gagal menghapus')
+            } else {
+              alert('berhasil menghapus')
+              this.kmSaya.splice(index, 1)
+            }
+          })
+        }
+      },
+      kmSayaUpdate(key, value, kd_km, index) {
+        let url = window._baseurl + 'api/self/dosen/ketersediaan-mengajar/' + kd_km
+        let data = {}
+        data[key] = value
+        axios.put(url, data).then(resp => {
+          return resp.data
+        }).then(data => {
+          if (data.success == true) {
+            alert(key + ' berhasil di update.')
+            this.kmSaya[index].semester = value
+            this.kmSaya[index].edited.open[key] = false
+          }
+        })
+      }
+    },
+    mounted () {
+      this.getTahunAkademik()
+      this.getKm()
+      this.getKmSaya()
+    }
+  })
+</script>
+{% endblock %}

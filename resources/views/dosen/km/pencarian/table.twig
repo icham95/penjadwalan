@@ -1,0 +1,42 @@
+<div class="col-lg-8" style="margin-left:0;padding-left:0;">
+  <div class="card" style="">
+    <div style="padding:10px;background-color:#2f333e;color:white;">
+      <i class="fa fa-book"></i> Ketersediaan Mengajar
+    </div>
+    <div class="card-body" style="position:relative;min-height:400px;">
+      <div v-if="loading.table"
+      style="position:absolute;top:0px;left:0px;background-color:rgba(0,0,0,0.75);
+      height:100%;width:100%;display:inline-block;text-align:center;color:white;">
+        <i class="fa fa-spinner fa-pulse fa-5x fa-fw" style="margin-top:70px;margin-bottom:10px;"></i>
+        <span class="sr-only">Loading...</span>
+        <div>mengambil data</div>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Tahun</th>
+            <th>Semester</th>
+            <th>Hari</th>
+            <th>Waktu mulai</th>
+            <th>Waktu akhir</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        
+          <tr v-for="(item, index) in km">
+            <th scope="row">${ (index + 1) }</th>
+            <td>${item.tahun_akademik[0].thn_akademik}</td>
+            <td>${item.semester}</td>
+            <td>${item.hari}</td>
+            <td>${item.waktu_mulai}</td>
+            <td>${item.waktu_akhir}</td>
+            <td></td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

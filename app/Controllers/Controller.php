@@ -10,6 +10,7 @@ class Controller
   protected $db;
   protected $view;
   protected $router;
+  protected $path;
   
   public function __construct(ContainerInterface $container)
   {
@@ -17,5 +18,6 @@ class Controller
     $this->db = $this->container->db;
     $this->view = $this->container->view;
     $this->router = $this->container->get('router');
+    $this->path = $_SERVER['DOCUMENT_ROOT'] . '/project/start/';
   }
 }

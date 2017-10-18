@@ -17,10 +17,26 @@
     </div>
     <!-- Javascript files-->
     <script>
-      window._baseurl = 'http://localhost/project/start/';
+      window._baseurl = 'http://localhost/project/start/'
       window._session = {
         id: {{session.dosen.id}}
       }
+      
+      init()
+
+      function init () {
+        fetch(window._baseurl + 'api/self/dosen/dosen/' + window._session.id, {  
+          credentials: 'include'
+        }).then(resp => {
+          return resp.json()
+        }).then(data => {
+          let fotoDosen = document.getElementById('foto-dosen')
+          let namaDosen = document.getElementById('nama-dosen')
+          fotoDosen.src = window._baseurl + 'resources/images/' + data.data[0].foto
+          namaDosen.innerHTML = data.data[0].nama
+        })
+      }
+
     </script>
     <script src="{{ base_url() }}/resources/assets/js/jquery.js"></script>
     <script src="{{ base_url() }}/resources/assets/js/tether.min.js"></script>

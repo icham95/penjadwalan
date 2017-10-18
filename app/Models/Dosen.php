@@ -10,4 +10,9 @@ class Dosen extends Model
   protected $guarded = [];
   protected $primaryKey = 'kd_dosen';
   public $timestamps = false;
+
+  public function km()
+  {
+    return $this->hasMany('App\Models\KetersediaanMengajar', 'kd_dosen', 'kd_dosen');
+  }
 }

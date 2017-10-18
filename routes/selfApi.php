@@ -9,7 +9,11 @@ $app->group('/api/self', function () use($app) {
 
     $app->get('/dosen', 'App\Controllers\SelfApi\DosenController:index');
     $app->get('/dosen/{id}', 'App\Controllers\SelfApi\DosenController:single');
-    $app->post('/dosen', 'App\Controllers\SelfApi\DosenController:create');
+    
+    $app->post('/dosen', 'App\Controllers\SelfApi\DosenController:create')
+        ->add(new App\Middleware\ValidationReturn())
+        ->add(App\Middleware\ValidationHelper::validate('createDosen'));
+
     $app->put('/dosen/{id}', 'App\Controllers\SelfApi\DosenController:update');
     $app->delete('/dosen/{id}', 'App\Controllers\SelfApi\DosenController:delete');
 
@@ -21,7 +25,9 @@ $app->group('/api/self', function () use($app) {
 
     $app->get('/ketersediaan-mengajar', 'App\Controllers\SelfApi\KetersediaanMengajarController:index');
     $app->get('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:single');
-    $app->post('/ketersediaan-mengajar', 'App\Controllers\SelfApi\KetersediaanMengajarController:create');
+
+    $app->post('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:create');
+
     $app->put('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:update');
     $app->delete('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:delete');
 

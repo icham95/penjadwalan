@@ -20,13 +20,12 @@ class ValidationHelper
     ];
   }
 
-  public function apiCreateUser()
+  public function createDosen()
   {
     return [
+      'nip'      => v::notBlank()->alnum()->noWhitespace()->length(1, 10),
       'username' => v::notBlank()->alnum()->noWhitespace()->length(1, 10),
-      'password' => v::notBlank()->alnum()->length(4, 16),
-      'level' => v::notBlank()->alnum(),
-      'id_login' => v::notBlank()->alnum()
+      'password' => v::notBlank()->alnum()->length(4, 16)
     ];
   }
 }

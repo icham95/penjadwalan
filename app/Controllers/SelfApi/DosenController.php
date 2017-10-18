@@ -80,14 +80,51 @@ class DosenController extends \App\Controllers\Controller
     $parsed = $req->getParsedBody();
     
     $update_success = [];
+    $foto = false;
     foreach ($parsed as $index => $value) {
-      try {
-        Dosen::where('kd_dosen', $arg['id'])->update([
-          "$index" => $value
-        ]);
-        $update_success[$index] = true;
-      } catch (\Exception $e) {
-        $update_success[$index] = false;
+      if ($index == 'foto') {
+        try {
+          $path = $this->path . 'resources/images/';
+          $new_name = md5(time()) . '.png';
+          $path = $path . $new_name;
+          
+          $img = base64_decode($value);
+          $img = imagecreatefromstring($img);
+
+          imagepng($img, $path);
+          imagedestroy($img);
+
+          // cek apakah user punya foto sebelum nya
+          $dosen = Dosen::where('kd_dosen', $arg['id'])->first();
+          if ($dosen->foto != null) {
+            // delete foto
+            if (file_exists($this->path . 'resources/images/' . $dosen->foto)) {
+              unlink($this->path . 'resources/images/' . $dosen->foto);
+            }
+          }
+          
+          $dosen->update([
+            "$index" => $new_name
+          ]);
+          
+          $foto = true;
+          $update_success[$index] = true;
+        } catch (\Exception $e) {
+          return $res->withJson([
+            'success' => false,
+            'code' => 2,
+            'msg' => 'upload foto failed'
+          ]);      
+        }
+      } else {
+        try {
+          Dosen::where('kd_dosen', $arg['id'])->update([
+            "$index" => $value
+          ]);
+          $update_success[$index] = true;
+        } catch (\Exception $e) {
+          $update_success[$index] = false;
+        }
       }
     }
 
@@ -95,7 +132,7 @@ class DosenController extends \App\Controllers\Controller
       'success' => true,
       'code' => 1,
       'msg' => $update_success,
-      'data_back' => $parsed
+      'data_back' => ($foto) ? $new_name : $parsed,
     ]);
   }
 

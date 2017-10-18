@@ -20,8 +20,9 @@
       text-align:center;
       position:relative;
     }
-    .profile-pic > img {
+    .profile-pic > div > img {
       width: 120px;
+      height: 120px;
       border-radius: 120px;
     }
     .edit-profile-dosen input {
@@ -45,8 +46,8 @@
 
       <div class="col-lg-3 col-md-6" style="margin-top:15px;padding-right:0px;">
         <div class="card">
-          <div style="padding:10px 0px 7px 20px;font-size:24px;">
-            Settings
+          <div style="padding:10px;background-color:#2f333e;color:white;">
+            <i class="fa fa-book"></i> Setting
           </div>
           <div class="card-body" style="padding-top:10px;border-top:1px solid rgba(0,0,0,0.1);">
             <div style="min-height:320px;">
@@ -103,6 +104,11 @@
             password: {
               edited: false,
               value: 'password'
+            },
+            foto: {
+              edited: false,
+              value: 'foto',
+              tmp: null
             }
           }
         }
@@ -110,7 +116,7 @@
     },
      methods: {
        getUser () {
-         axios.get(window._baseurl + 'api/self/dosen/dosen/' + {{ session.dosen.id }})
+         axios.get(window._baseurl + 'api/self/dosen/dosen/' + window._session.id)
          .then(resp => {
            return resp.data
          }).then(data => {
@@ -119,6 +125,7 @@
            this.editProfile.user.nama.value = dosen.nama
            this.editProfile.user.alamat.value = dosen.alamat
            this.editProfile.user.noHp.value = dosen.no_hp
+           this.editProfile.user.foto.value = dosen.foto
            this.editProfile.user.username.value = dosen.username
            this.editProfile.user.password.value = dosen.password
          })
@@ -126,7 +133,7 @@
        updateUser(index, val) {
          let data = {}
          data[index] = val
-         axios.put(window._baseurl + 'api/self/dosen/dosen/' + {{ session.dosen.id }}, data)
+         axios.put(window._baseurl + 'api/self/dosen/dosen/' + window._session.id, data)
          .then(resp => {
            return resp.data
          }).then(data => {
@@ -134,6 +141,13 @@
              alert(index + ' berhasil di update')
              if (index == 'no_hp') {
                this.editProfile.user['noHp'].edited = false
+             } else if (index == 'foto') {
+               document.getElementById('foto-dosen').src = window._baseurl + 'resources/images/' + data.data_back
+               this.editProfile.user['foto'].value = data.data_back
+               this.editProfile.user['foto'].edited = false
+             } else if (index == 'nama') {
+               document.getElementById('nama-dosen').innerHTML = val
+               this.editProfile.user[index].edited = false
              } else {
                this.editProfile.user[index].edited = false
              }
@@ -141,6 +155,18 @@
              alert(index + ' gagal di update')
            }
          })
+       },
+       updateUserPic() {
+         let split_img = this.editProfile.user.foto.tmp.split(',')
+         this.updateUser('foto', split_img[1])
+       },
+       onChangePic (e) {
+         let file = e.srcElement.files[0]
+         fileReader = new FileReader()
+         fileReader.onload = (e => {
+           this.editProfile.user.foto.tmp = e.target.result
+         })
+         fileReader.readAsDataURL(file)
        }
      },
      mounted () {

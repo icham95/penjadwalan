@@ -21,6 +21,11 @@ class DosenController extends \App\Controllers\Controller
     $this->view->render($res, 'dosen/dashboard.twig');
   }
 
+  public function ketersediaan_mengajar($req, $res)
+  {
+    $this->view->render($res, 'dosen/km/default.twig');
+  }
+
   public function setting($req, $res)
   {
     $this->view->render($res, 'dosen/setting/default.twig');
