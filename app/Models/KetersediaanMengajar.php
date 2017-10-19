@@ -15,4 +15,9 @@ class KetersediaanMengajar extends Model
   {
     return $this->hasMany('App\Models\TahunAkademik', 'kd_thn_akademik', 'kd_tahun_akademik');
   }
+
+  public function dosen()
+  {
+    return $this->belongsTo('App\Models\Dosen', 'kd_dosen', 'kd_dosen');
+  }
 }

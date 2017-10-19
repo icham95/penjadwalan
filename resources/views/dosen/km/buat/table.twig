@@ -2,15 +2,19 @@
   <div class="card" style="">
     <div style="padding:10px;background-color:#2f333e;color:white;">
       <i class="fa fa-book"></i> Ketersediaan Mengajar Saya
-      <button @click.prevent = "getKmSaya"
+      <button @click.prevent = "refreshGetKmSaya"
       class="btn btn-sm pull-right bg-blue"> 
         <i class="fa fa-refresh" :class="{'fa-pulse fa-fw': loading.table}"></i> 
       </button>
-      <button @click.prevent = "getKmSaya"
+      <button @click.prevent = "nextKmSaya"
       class="btn btn-sm pull-right bg-blue" style="margin-right:5px;"> 
         <i class="fa fa-arrow-right"></i> 
       </button>
-      <button @click.prevent = "getKmSaya"
+      <button @click.prevent = "nextKmSaya"
+      class="btn btn-sm pull-right bg-white" style="margin-right:5px;"> 
+        ${paging.kmSaya.page}
+      </button>
+      <button @click.prevent = "prevKmSaya"
       class="btn btn-sm pull-right bg-blue" style="margin-right:5px;"> 
         <i class="fa fa-arrow-left"></i> 
       </button>
@@ -38,10 +42,35 @@
         <tbody>
         
           <tr v-for="(item, index) in kmSaya">
+            {# nomer #}
             <th scope="row">${ (index + 1) }</th>
-            <td @dblclick.prevent="">
-              ${item.tahun_akademik[0].thn_akademik}
+            {# tahun akademik #}
+            <td @dblclick.prevent="item.edited.open.kd_tahun_akademik = true">
+              <div v-if="item.edited.open.kd_tahun_akademik == false">${item.tahun_akademik[0].thn_akademik}</div>
+              <form v-else class="form-inline">
+                <div class="form-group" style="width:100%;">
+                  <div class="input-group">
+                    <button @click.prevent="kmSayaUpdate('kd_tahun_akademik', item.edited.temp.kd_tahun_akademik, item.kd_km, index)" 
+                    class="btn btn-sm bg-blue input-group-addon"> 
+                      <i class="fa fa-check"></i> 
+                    </button>
+                    <select v-model="item.edited.temp.kd_tahun_akademik"
+                    style="padding:3.5px;"
+                    class="form-control form-control-sm">
+                      <option value=""></option>
+                      <option v-for="(item, index) in tahunAkademik" :value="item.kd_thn_akademik">
+                        ${ item.thn_akademik } (${ item.semester })
+                      </option>
+                    </select>
+                    <button @click.prevent="item.edited.open.kd_tahun_akademik = false" 
+                    class="btn btn-sm bg-red input-group-addon"> 
+                      <i class="fa fa-times"></i> 
+                    </button>
+                  </div>
+                </div>
+              </form>
             </td>
+            {# semester #}
             <td @dblclick.prevent="item.edited.open.semester = true">
               <div v-if="item.edited.open.semester == false">${item.semester}</div>
               <form v-else class="form-inline">
@@ -65,9 +94,74 @@
                 </div>
               </form>
             </td>
-            <td>${item.hari}</td>
-            <td>${item.waktu_mulai}</td>
-            <td>${item.waktu_akhir}</td>
+            {# hari #}
+            <td @dblclick.prevent="item.edited.open.hari = true">
+              <div v-if="item.edited.open.hari == false">${item.hari}</div>
+              <form v-else class="form-inline">
+                <div class="form-group" style="width:100%;">
+                  <div class="input-group">
+                    <button @click.prevent="kmSayaUpdate('hari', item.edited.temp.hari, item.kd_km, index)" 
+                    class="btn btn-sm bg-blue input-group-addon"> 
+                      <i class="fa fa-check"></i> 
+                    </button>
+                    <select v-model="item.edited.temp.hari" 
+                    style="padding:3.5px;"
+                    class="form-control form-control-sm">
+                      <option value=""></option>
+                      <option value="senin">senin</option>
+                      <option value="selasa">selasa</option>
+                      <option value="rabu">rabu</option>
+                      <option value="kamis">kamis</option>
+                      <option value="jumat">jumat</option>
+                      <option value="sabtu">sabtu</option>
+                      <option value="minggu">minggu</option>
+                    </select>
+                    <button @click.prevent="item.edited.open.hari = false" 
+                    class="btn btn-sm bg-red input-group-addon"> 
+                      <i class="fa fa-times"></i> 
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </td>
+            {# waktu mulai #}
+            <td @dblclick.prevent="item.edited.open.waktu_mulai = true">
+              <div v-if="item.edited.open.waktu_mulai == false">${item.waktu_mulai}</div>
+              <form v-else class="form-inline">
+                <div class="form-group" style="width:100%;">
+                  <div class="input-group">
+                    <button @click.prevent="kmSayaUpdate('waktu_mulai', item.edited.temp.waktu_mulai, item.kd_km, index)" 
+                    class="btn btn-sm bg-blue input-group-addon"> 
+                      <i class="fa fa-check"></i> 
+                    </button>
+                    <input type="time" v-model="item.edited.temp.waktu_mulai"  class="form-control form-control-sm">
+                    <button @click.prevent="item.edited.open.waktu_mulai = false" 
+                    class="btn btn-sm bg-red input-group-addon"> 
+                      <i class="fa fa-times"></i> 
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </td>
+            {# waktu akhir #}
+            <td @dblclick.prevent="item.edited.open.waktu_akhir = true">
+              <div v-if="item.edited.open.waktu_akhir == false">${item.waktu_akhir}</div>
+              <form v-else class="form-inline">
+                <div class="form-group" style="width:100%;">
+                  <div class="input-group">
+                    <button @click.prevent="kmSayaUpdate('waktu_akhir', item.edited.temp.waktu_akhir, item.kd_km, index)" 
+                    class="btn btn-sm bg-blue input-group-addon"> 
+                      <i class="fa fa-check"></i> 
+                    </button>
+                    <input type="time" v-model="item.edited.temp.waktu_akhir"  class="form-control form-control-sm">
+                    <button @click.prevent="item.edited.open.waktu_akhir = false" 
+                    class="btn btn-sm bg-red input-group-addon"> 
+                      <i class="fa fa-times"></i> 
+                    </button>
+                  </div>
+                </div>
+              </form>
+            </td>
             <td> 
               <button @click.prevent = "kmSayaDelete(item, index)"
               class="btn btn-sm" style="background-color:crimson;color:white;">

@@ -26,7 +26,9 @@ $app->group('/api/self', function () use($app) {
     $app->get('/ketersediaan-mengajar', 'App\Controllers\SelfApi\KetersediaanMengajarController:index');
     $app->get('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:single');
 
-    $app->post('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:create');
+    $app->post('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:create')
+        ->add(new App\Middleware\ValidationReturn())
+        ->add(App\Middleware\ValidationHelper::validate('createKm'));
 
     $app->put('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:update');
     $app->delete('/ketersediaan-mengajar/{id}', 'App\Controllers\SelfApi\KetersediaanMengajarController:delete');

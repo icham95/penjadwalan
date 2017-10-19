@@ -49,6 +49,18 @@
     delimiters: ['${', '}'],
     data () {
       return {
+        paging: {
+          km: {
+            limit: 10,
+            offset: 0,
+            page: 0
+          },
+          kmSaya: {
+            limit: 10,
+            offset: 0,
+            page: 0
+          }
+        },
         open: 1,
         loading: {
           table: true
@@ -130,7 +142,7 @@
             }
           }
           this.kmSaya = km
-        }, null, null, null, null, 'kd_dosen', window._session.id)
+        }, this.paging.kmSaya.limit, this.paging.kmSaya.offset, null, null, 'kd_dosen', window._session.id)
       },
       searchKm() {
         let tahun
@@ -150,6 +162,7 @@
         this.search.hari= null
         this.search.waktu_mulai= null
         this.search.waktu_akhir= null
+        this.paging.km.offset = 0
         this.getKm()
       },
       createKm() {
@@ -158,7 +171,18 @@
           return resp.data
         }).then(resp => {
           if (resp.success == false) {
-            alert('gagal menyimpan.')
+            if (resp.code == 1) {
+              let msg = resp.msg
+              let msgBox = ''
+              for (let index in msg) {
+                msgBox += 'input '
+                msgBox += index + ' : \n'
+                for (let i = 0; i < msg[index].length; i++) {
+                  msgBox += msg[index][i] + ',\n'
+                }
+              }
+              alert(msgBox)
+            }
           } else {
             this.km.unshift(resp.data_back)
             if (this.km.length > 9) {
@@ -198,10 +222,52 @@
         }).then(data => {
           if (data.success == true) {
             alert(key + ' berhasil di update.')
-            this.kmSaya[index].semester = value
+            if (key == 'kd_tahun_akademik') {
+              this.getKmSaya()
+            } else {
+              this.kmSaya[index][key] = value
+            }
             this.kmSaya[index].edited.open[key] = false
           }
         })
+      },
+      nextKmSaya () {
+        if (this.paging.kmSaya.offset >= 0) {
+          this.paging.kmSaya.offset = (this.paging.kmSaya.offset + this.paging.kmSaya.limit)
+          this.paging.kmSaya.page += 1
+        }
+        this.getKmSaya()
+      },
+      prevKmSaya () {
+        if (this.paging.kmSaya.offset > 0) {
+          this.paging.kmSaya.offset = (this.paging.kmSaya.offset - this.paging.kmSaya.limit)
+          this.paging.kmSaya.page -= 1
+          this.getKmSaya()
+        }
+      },
+      nextKm () {
+        if (this.paging.km.offset >= 0) {
+          this.paging.km.offset = (this.paging.km.offset + this.paging.km.limit)
+          this.paging.km.page += 1
+        }
+        this.getKm(null, this.paging.km.limit, this.paging.km.offset)
+      },
+      prevKm () {
+        if (this.paging.km.offset > 0) {
+          this.paging.km.offset = (this.paging.km.offset - this.paging.km.limit)
+          this.paging.km.page -= 1
+          this.getKm(null, this.paging.km.limit, this.paging.km.offset)
+        }
+      },
+      refreshGetKm() {
+        this.paging.km.offset = 0
+        this.paging.km.page = 0
+        this.getKm()
+      },
+      refreshGetKmSaya() {
+        this.paging.kmSaya.offset = 0
+        this.paging.kmSaya.page = 0
+        this.getKmSaya()
       }
     },
     mounted () {

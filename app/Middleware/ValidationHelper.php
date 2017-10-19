@@ -28,4 +28,15 @@ class ValidationHelper
       'password' => v::notBlank()->alnum()->length(4, 16)
     ];
   }
+
+  public function createKm()
+  {
+    return [
+      'kd_tahun_akademik' => v::notBlank()->alnum()->noWhitespace()->length(1, 10),
+      'semester' => v::notBlank()->alnum()->noWhitespace()->length(1, 10),
+      'hari' => v::notBlank()->alnum()->noWhitespace()->length(1, 10),
+      'waktu_mulai' => v::notBlank()->noWhitespace()->length(1, 10),
+      'waktu_akhir' => v::notBlank()->noWhitespace()->length(1, 10),
+    ];
+  }
 }

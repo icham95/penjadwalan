@@ -2,6 +2,22 @@
   <div class="card" style="">
     <div style="padding:10px;background-color:#2f333e;color:white;">
       <i class="fa fa-book"></i> Ketersediaan Mengajar
+      <button @click.prevent = "refreshGetKm()"
+      class="btn btn-sm pull-right bg-blue"> 
+        <i class="fa fa-refresh" :class="{'fa-pulse fa-fw': loading.table}"></i> 
+      </button>
+      <button @click.prevent = "nextKm"
+      class="btn btn-sm pull-right bg-blue" style="margin-right:5px;"> 
+        <i class="fa fa-arrow-right"></i> 
+      </button>
+      <button @click.prevent = "nextKmSaya"
+      class="btn btn-sm pull-right bg-white" style="margin-right:5px;"> 
+        ${paging.km.page}
+      </button>
+      <button @click.prevent = "prevKm"
+      class="btn btn-sm pull-right bg-blue" style="margin-right:5px;"> 
+        <i class="fa fa-arrow-left"></i> 
+      </button>
     </div>
     <div class="card-body" style="position:relative;min-height:400px;">
       <div v-if="loading.table"
@@ -20,7 +36,7 @@
             <th>Hari</th>
             <th>Waktu mulai</th>
             <th>Waktu akhir</th>
-            <th>Action</th>
+            <th>Oleh</th>
           </tr>
         </thead>
         <tbody>
@@ -32,7 +48,7 @@
             <td>${item.hari}</td>
             <td>${item.waktu_mulai}</td>
             <td>${item.waktu_akhir}</td>
-            <td></td>
+            <td>${item.dosen.nama}</td>
           </tr>
 
         </tbody>

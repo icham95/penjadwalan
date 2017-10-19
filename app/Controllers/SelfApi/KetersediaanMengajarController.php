@@ -25,6 +25,7 @@ class KetersediaanMengajarController extends \App\Controllers\Controller
     $ketersediaanMengajar = KetersediaanMengajar::with(['tahun_akademik' => function ($query) use($tahun) {
                               $query->where('thn_akademik', 'like', '%' . $tahun . '%');
                             }])
+                            ->with('dosen')
                             ->whereHas('tahun_akademik', function ($query) use($tahun) {
                               $query->where('thn_akademik', 'like', '%' . $tahun . '%');
                             })
