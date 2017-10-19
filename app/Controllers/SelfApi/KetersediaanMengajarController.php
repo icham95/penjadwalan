@@ -83,7 +83,7 @@ class KetersediaanMengajarController extends \App\Controllers\Controller
       'success' => true,
       'code' => 1,
       'msg' => 'berhasil menyimpan data',
-      'data_back' => KetersediaanMengajar::with('tahun_akademik')->where('kd_km', $ketersediaanMengajar->kd_km)->first()
+      'data_back' => KetersediaanMengajar::with('tahun_akademik', 'dosen')->where('kd_km', $ketersediaanMengajar->kd_km)->first()
     ]);
 
   }

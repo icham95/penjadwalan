@@ -184,12 +184,30 @@
               alert(msgBox)
             }
           } else {
-            this.km.unshift(resp.data_back)
+            let resp_data = resp.data_back
+            resp_data['edited'] = {
+              temp: {
+                hari: null,
+                semester: null,
+                waktu_mulai: null,
+                waktu_akhir: null,
+                kd_tahun_akademik: null
+              },
+              open: {
+                all: false,
+                hari: false,
+                semester: false,
+                waktu_mulai: false,
+                waktu_akhir: false,
+                kd_tahun_akademik: false
+              }
+            }
+            this.km.unshift(resp_data)
             if (this.km.length > 9) {
               this.km.pop(this.km.length)
             }
 
-            this.kmSaya.unshift(resp.data_back)
+            this.kmSaya.unshift(resp_data)
             if (this.kmSaya.length > 9) {
               this.kmSaya.pop(this.kmSaya.length)
             }
