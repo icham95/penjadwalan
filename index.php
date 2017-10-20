@@ -8,3 +8,10 @@ require './routes/web.php';
 require './routes/selfApi.php';
 
 $app->run();
+
+/*
+note 
+footer.twig di folder dosen/include
+app.php di folder init
+controller.php di app/controller
+*/
